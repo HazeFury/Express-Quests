@@ -67,8 +67,49 @@ const postUser = (req, res) => {
   };
   
 
+  const updateUser = (req, res) => {
+    const id = parseInt(req.params.id);
+    const user = req.body;
+  
+    database
+      .query(
+        "UPDATE users SET ? WHERE id = ?",
+        [user , id]
+      )
+      .then(([result]) => {
+        if (result.affectedRows === 0) {
+          res.status(404).send("Not Found");
+        } else {
+          res.sendStatus(204);
+        }
+      })
+      .catch((err) => {
+        console.error(err);
+        res.status(500).send("Error editing the movie");
+      });
+  };
+
+
+  const deleteUser = (req, res) => {
+    const id = parseInt(req.params.id);
+    database
+      .query("DELETE FROM users WHERE id = ?", [id])
+      .then(([result]) => {
+        if (result.affectedRows > 0) res.sendStatus(204);
+        else res.sendStatus(404);
+      })
+      .catch((err) => {
+        console.log(err);
+        res.sendStatus(500);
+      });
+  };
+
+
+
 module.exports = {
   getUsers,
   getUserById,
   postUser,
+  updateUser,
+  deleteUser,
 };
